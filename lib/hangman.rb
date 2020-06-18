@@ -6,6 +6,7 @@ class Hangman
     @guessed_word = '_' * @word.length
     @false_guesses = 0
     main
+    puts @word
   end
 
   def main
@@ -29,7 +30,7 @@ class Hangman
     puts
   end
 
-    def get_guess
+  def get_guess
     loop do
       puts 'What letters are in this word?'
       guess = gets.chomp
@@ -38,14 +39,14 @@ class Hangman
   end
 
   def check_guess(guess)
-    if @word.include?(guess)
+    if @word.downcase.include?(guess.downcase)
       # casecmp compares two strings, case-insensitively
       # doesn't work
       indexes = (0...@word.length).find_all {
         |i| @word[i, 1].casecmp?(guess)
       }
       indexes.each do |i|
-        @guessed_word[i] = guess
+        @guessed_word[i] = guess.downcase
         puts @guessed_word
       end
     else
