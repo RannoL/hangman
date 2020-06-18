@@ -1,32 +1,35 @@
 # Main game init and loop
 class Hangman
   def initialize
+    require 'io/console'
+    @win_width = IO.console.winsize[1]
     @word = pick_random_line
     @guesses = []
-    @guessed_word = '_' * @word.length
+    @guessed_word = Array.new(@word.length, '_')
     @false_guesses = 0
     main
-    puts @word
   end
 
   def main
+    puts "#{'=' * @win_width} "
     welcome
-    puts @word
     loop do
       check_guess(get_guess)
+      break if victory?
+      break if defeat?
+
+      puts "#{'=' * @win_width} "
     end
   end
 
   def welcome
-    require 'io/console'
-    win_width = IO.console.winsize[1]
-    puts "#{'=' * win_width} "
+
 
     puts 'Welcome! Guess the word I am thinking and I will stop the execution.'
     puts
-    puts "It has #{@word.length} letters".center(win_width)
+    puts "It has #{@word.length} letters".center(@win_width)
     puts
-    puts @guessed_word.center(win_width)
+    puts @guessed_word.join(' ').center(@win_width)
     puts
   end
 
@@ -41,17 +44,19 @@ class Hangman
   def check_guess(guess)
     if @word.downcase.include?(guess.downcase)
       # casecmp compares two strings, case-insensitively
-      # doesn't work
+      # takes 1 letter substrings from the word and looks for match
+      # if match, add that to indexes array
       indexes = (0...@word.length).find_all {
         |i| @word[i, 1].casecmp?(guess)
       }
+      # replace the '_' with the guessed letters
       indexes.each do |i|
         @guessed_word[i] = guess.downcase
-        puts @guessed_word
+        puts @guessed_word.join(' ')
       end
     else
       @false_guesses += 1
-      puts "#{@false_guesses} false guess(es)!"
+      display_hangman
     end
   end
 
@@ -78,8 +83,29 @@ class Hangman
       false
     end
   end
-  
-  def check_victory
+
+  def victory?
+    if @guessed_word.join.downcase == @word.downcase
+      puts
+      puts 'Congratulations! You are a hero!'
+      true
+    else
+      false
+    end
+  end
+
+  def defeat?
+    if @false_guesses >= 7
+      puts 'Game over.'
+      puts "The word was #{@word}"
+      true
+    else
+      false
+    end
+  end
+
+  def display_hangman
+    puts File.read("assets/#{@false_guesses}false.txt")
   end
 
   def pick_random_line
