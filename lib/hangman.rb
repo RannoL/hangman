@@ -14,6 +14,7 @@ class Hangman
     puts "#{'=' * @win_width} "
     welcome
     loop do
+      update_display
       check_guess(get_guess)
       break if victory?
       break if defeat?
@@ -23,13 +24,9 @@ class Hangman
   end
 
   def welcome
-
-
     puts 'Welcome! Guess the word I am thinking and I will stop the execution.'
     puts
     puts "It has #{@word.length} letters".center(@win_width)
-    puts
-    puts @guessed_word.join(' ').center(@win_width)
     puts
   end
 
@@ -52,11 +49,9 @@ class Hangman
       # replace the '_' with the guessed letters
       indexes.each do |i|
         @guessed_word[i] = guess.downcase
-        puts @guessed_word.join(' ')
       end
     else
       @false_guesses += 1
-      display_hangman
     end
   end
 
@@ -96,6 +91,8 @@ class Hangman
 
   def defeat?
     if @false_guesses >= 7
+      puts "#{'=' * @win_width} "
+      update_display
       puts 'Game over.'
       puts "The word was #{@word}"
       true
@@ -106,6 +103,16 @@ class Hangman
 
   def display_hangman
     puts File.read("assets/#{@false_guesses}false.txt")
+  end
+
+  def update_display
+    display_hangman
+    puts
+    puts @guessed_word.join(' ')
+    puts
+    puts
+    puts "Letters used: #{@guesses.join(',')}"
+    puts "#{'_' * @win_width} "
   end
 
   def pick_random_line
