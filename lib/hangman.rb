@@ -10,9 +10,12 @@ class Hangman
     main
   end
 
+  private
+
   def main
     puts "#{'=' * @win_width} "
     welcome
+    begin
     loop do
       update_display
       check_guess(get_guess)
@@ -20,6 +23,10 @@ class Hangman
       break if defeat?
 
       puts "#{'=' * @win_width} "
+    end
+    rescue Exception
+      puts 'Game saved'
+      save_game
     end
   end
 
@@ -95,6 +102,7 @@ class Hangman
       update_display
       puts 'Game over.'
       puts "The word was #{@word}"
+      save_game
       true
     else
       false
@@ -121,6 +129,13 @@ class Hangman
         .sample
         .strip
   end
+
+  def save_game
+    require 'yaml'
+    File.open('save_games/slot1.yml', 'w') { |f| YAML.dump([] << self, f)}
+  end
 end
+
+
 
 Hangman.new

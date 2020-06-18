@@ -1,0 +1,16 @@
+---
+- !ruby/object:Hangman
+  win_width: 69
+  word: gurney
+  guesses:
+  - s
+  - e
+  - a
+  guessed_word:
+  - _
+  - _
+  - _
+  - _
+  - e
+  - _
+  false_guesses: 2
